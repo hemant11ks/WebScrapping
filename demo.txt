@@ -1,0 +1,62 @@
+I will explain you structure how to find value explain me: 
+
+
+There is a <table> tag inside div tag (there are multiple div tag with same name).
+<table> tag class is unique i.e "un". inside that table tag there is <colgroup> tag and <tbody> tag.
+In <tbody> The require data is present actually I will provide the string and code need to find required corresponding string.
+So Inside <tbody> tag there are multiple <tr> tag. there are 6 <tr> tags.
+First tr tag have 4 <td> tags we need to skip that. then 2nd <tr> tag we also need to skip that.
+Now 3rd and 4th <tr> tag we need to find two corresponding value according to string given.
+On third <tr> tag  there is first <th> tag that has value in <p title> tag I will give that value. after
+<th> tag there is <td> tag which has value in <span> tag I need that value, after that <td> there one more <td> we need to skip that then after that <td>
+there is  next <td> there is <span> tag we need that value. First do that then will go to 4 th  <tr>
+
+import requests
+from bs4 import BeautifulSoup
+
+# Fetch the webpage content
+url = 'http://example.com'  # Replace with your actual URL
+response = requests.get(url)
+soup = BeautifulSoup(response.content, 'html.parser')
+
+# Find the specific table by its unique class "un"
+table = soup.find('table', {'class': 'un'})
+
+if table:
+    tbody = table.find('tbody')  # Locate the tbody tag within the table
+    if tbody:
+        rows = tbody.find_all('tr')  # Find all tr tags
+
+        # Skip the first and second tr tags
+        if len(rows) >= 4:
+            # Process the 3rd tr tag
+            third_tr = rows[2]
+            th_tag = third_tr.find('th')
+            
+            # Ensure the th tag has a p tag with the title attribute
+            if th_tag:
+                p_tag = th_tag.find('p')
+                if p_tag and 'title' in p_tag.attrs:
+                    title_value = p_tag['title']  # Extract the title value
+                    print(f"Title in third tr: {title_value}")
+                
+                # Get the required td tags (first td with span, and the last td with span)
+                td_tags = third_tr.find_all('td')
+                
+                if len(td_tags) >= 4:
+                    # First td with span
+                    first_span = td_tags[0].find('span')
+                    if first_span:
+                        print(f"Value from first td in third tr: {first_span.text.strip()}")
+                    
+                    # Last td with span (after skipping the middle td)
+                    last_span = td_tags[3].find('span')
+                    if last_span:
+                        print(f"Value from last td in third tr: {last_span.text.strip()}")
+            
+            # Now process the 4th tr tag (similar approach)
+            fourth_tr = rows[3]
+            # You can apply similar logic here based on your data extraction needs
+else:
+    print("Table with class 'un' not found")
+-------------------------------------------------------------------------------------------------------------------
